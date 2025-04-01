@@ -1,46 +1,37 @@
-name: "Terraform CI/CD"
+name: Terraform Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # Runs when pushing to main
   pull_request:
-    branches:
-      - main
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
   terraform:
-    name: "Terraform Apply"
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
-
-      - name: Initialize Terraform
+      - name: Terraform Init
         run: terraform init
 
-      - name: Validate Terraform files
+      - name: Terraform Validate
         run: terraform validate
 
-      - name: Plan Terraform changes
-        run: terraform plan -out=tfplan
+      - name: Terraform Plan
+        run: terraform plan -var="public_key=${{ secrets.SSH_PUBLIC_KEY }}"
 
-      - name: Apply Terraform changes
+      - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -var="public_key=${{ secrets.SSH_PUBLIC_KEY }}"
