@@ -3,7 +3,7 @@ name: Terraform Deploy
 on:
   push:
     branches:
-      - main  # Runs when pushing to main
+      - main
   pull_request:
 
 permissions:
@@ -17,6 +17,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-actions-role
+          role-session-name: GitHubTerraformSession
+          aws-region: eu-north-1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
