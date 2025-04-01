@@ -22,6 +22,7 @@ variable "instance_type" {
   default = "t3.micro"
 }
 
-variable "public_key_location" {
-  default = "/home/olaya/.ssh/id_rsa.pub"
+variable "public_key" {
+  description = "SSH public key content"
+  type        = string
 }

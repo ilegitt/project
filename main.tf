@@ -81,8 +81,8 @@ output "ec2_public_ip" {
 }
 
 resource "aws_key_pair" "ssh-key" {
-  key_name = "server-key"
-  public_key = file(var.public_key_location)
+  key_name   = "server-key"
+  public_key = var.public_key
 }
 
 resource "aws_instance" "myapp-server" {
